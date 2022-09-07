@@ -146,10 +146,10 @@ async function run(): Promise<void> {
 
         // check if image with all the required tags exist in Docker image storage
         // and if exist pull the image with all the tags to Podman
-        const dockerImageStorageCheckResult: ImageStorageCheckResult = await pullImageFromDocker();
+        // const dockerImageStorageCheckResult: ImageStorageCheckResult = await pullImageFromDocker();
 
-        const dockerFoundTags: string[] = dockerImageStorageCheckResult.foundTags;
-        const dockerMissingTags: string[] = dockerImageStorageCheckResult.missingTags;
+        const dockerFoundTags: string[] = [];
+        const dockerMissingTags: string[] = [];
 
         if (dockerFoundTags.length > 0) {
             core.info(`Tag${dockerFoundTags.length !== 1 ? "s" : ""} "${dockerFoundTags.join(", ")}" `
@@ -290,34 +290,34 @@ async function run(): Promise<void> {
     core.setOutput(Outputs.REGISTRY_PATHS, JSON.stringify(registryPathList));
 }
 
-async function pullImageFromDocker(): Promise<ImageStorageCheckResult> {
-    core.info(`🔍 Checking if "${sourceImages.join(", ")}" present in the local Docker image storage`);
-    const foundTags: string[] = [];
-    const missingTags: string[] = [];
-    try {
-        for (const imageWithTag of sourceImages) {
-            const commandResult: ExecResult = await execute(
-                await getPodmanPath(),
-                [ ...dockerPodmanOpts, "pull", `docker-daemon:${imageWithTag}` ],
-                { ignoreReturnCode: true, failOnStdErr: false, group: true }
-            );
-            if (commandResult.exitCode === 0) {
-                foundTags.push(imageWithTag);
-            }
-            else {
-                missingTags.push(imageWithTag);
-            }
-        }
-    }
-    catch (err) {
-        core.warning(err);
-    }
+// async function pullImageFromDocker(): Promise<ImageStorageCheckResult> {
+//     core.info(`🔍 Checking if "${sourceImages.join(", ")}" present in the local Docker image storage`);
+//     const foundTags: string[] = [];
+//     const missingTags: string[] = [];
+//     try {
+//         for (const imageWithTag of sourceImages) {
+//             const commandResult: ExecResult = await execute(
+//                 await getPodmanPath(),
+//                 [ ...dockerPodmanOpts, "pull", `docker-daemon:${imageWithTag}` ],
+//                 { ignoreReturnCode: true, failOnStdErr: false, group: true }
+//             );
+//             if (commandResult.exitCode === 0) {
+//                 foundTags.push(imageWithTag);
+//             }
+//             else {
+//                 missingTags.push(imageWithTag);
+//             }
+//         }
+//     }
+//     catch (err) {
+//         core.warning(err);
+//     }
 
-    return {
-        foundTags,
-        missingTags,
-    };
-}
+//     return {
+//         foundTags,
+//         missingTags,
+//     };
+// }
 
 async function checkImageInPodman(): Promise<ImageStorageCheckResult> {
     // check if images exist in Podman's storage
