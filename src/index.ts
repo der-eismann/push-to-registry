@@ -5,7 +5,6 @@ import * as fs from "fs";
 import * as os from "os";
 import * as path from "path";
 import {
-    isStorageDriverOverlay, findFuseOverlayfsPath,
     splitByNewline,
     isFullImageName, getFullImageName,
     getFullDockerImageName,
@@ -387,22 +386,6 @@ async function createDockerPodmanImageStroage(): Promise<void> {
     dockerPodmanRoot = await fs.promises.mkdtemp(path.join(os.tmpdir(), "podman-from-docker-"));
 
     dockerPodmanOpts = [ "--root", dockerPodmanRoot ];
-
-    if (await isStorageDriverOverlay()) {
-        const fuseOverlayfsPath = await findFuseOverlayfsPath();
-        if (fuseOverlayfsPath) {
-            core.info(`Overriding storage mount_program with "fuse-overlayfs" in environment`);
-            dockerPodmanOpts.push("--storage-opt");
-            dockerPodmanOpts.push(`overlay.mount_program=${fuseOverlayfsPath}`);
-        }
-        else {
-            core.warning(`"fuse-overlayfs" is not found. Install it before running this action. `
-            + `For more detail see https://github.com/redhat-actions/buildah-build/issues/45`);
-        }
-    }
-    else {
-        core.info("Storage driver is not 'overlay', so not overriding storage configuration");
-    }
 }
 
 async function removeDockerPodmanImageStroage(): Promise<void> {
