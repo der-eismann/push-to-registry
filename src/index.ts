@@ -338,8 +338,9 @@ async function checkImageInPodman(): Promise<ImageStorageCheckResult> {
             }
         }
     }
-    catch (err: any) {
-        core.debug(err);
+    catch (err) {
+        core.debug(typeof err === "object" && err && "stack" in err
+         && typeof err.stack === "string" ? err.stack : `${err}`);
     }
 
     return {
