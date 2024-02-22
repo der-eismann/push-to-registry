@@ -338,7 +338,7 @@ async function checkImageInPodman(): Promise<ImageStorageCheckResult> {
             }
         }
     }
-    catch (err) {
+    catch (err: any) {
         core.debug(err);
     }
 
