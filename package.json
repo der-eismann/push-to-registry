@@ -2,6 +2,9 @@
   "name": "push-to-registry",
   "version": "0.0.1",
   "description": "Action to push images to registry",
+  "engines": {
+    "node": "20"
+  },
   "main": "index.js",
   "scripts": {
     "compile": "tsc -p .",
